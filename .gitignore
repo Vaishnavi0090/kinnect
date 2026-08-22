@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Environment Variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Database & Exports
+kinnect.db
+
+# Build outputs
+.next/
+out/
+build/
+dist/
+
+# OS/Editor Files
+.DS_Store
+.vscode/
+.idea/
+
+.git-old
+
+backend/exported_data/
+
+backend/exported_data/
+
+local
