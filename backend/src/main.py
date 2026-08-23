@@ -9,7 +9,7 @@ import os
 
 app = FastAPI(
     title="Kinnect API", 
-    description="Antigravity Framework API for IITK Campus Coordination",
+    description="Kinnect Campus Activity Coordination API",
     redirect_slashes=False
 )
 
