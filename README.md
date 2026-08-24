@@ -1,238 +1,375 @@
-# 🔗 Kinnect — Campus Activity Coordination Platform
+# Kinnect
 
-A real-time campus platform for IITK students to discover, create, and join activities happening nearby. Built with **Next.js** (frontend) and **FastAPI** (backend).
+Kinnect is a full-stack activity discovery and social coordination platform designed to help users discover nearby activities, connect with people who share similar interests, and communicate through real-time messaging.
 
----
-
-## 📋 Prerequisites
-
-Make sure these are installed on your system:
-
-| Tool | Version | Download |
-|------|---------|----------|
-| **Node.js** | v18+ | [nodejs.org](https://nodejs.org/) |
-| **Python** | 3.10+ | [python.org](https://python.org/) |
-| **Git** | any | [git-scm.com](https://git-scm.com/) |
+The platform combines location-aware activity discovery, activity-based group communication, direct messaging, friendships, notifications, and an emergency SOS mechanism into a unified web application.
 
 ---
 
-## 🚀 Quick Setup (5 minutes)
+## Features
 
-### Step 1: Clone the project
+### Activity Discovery
 
-```bash
-git clone <your-repo-url>
-cd GOAT
+- Discover activities based on location and proximity
+- View nearby activities through a location-aware activity feed
+- Filter and explore activities based on user interests and preferences
+- View detailed activity information
+- Create, join, leave, and disband activities
+- Support approval-based participation through join requests
+
+### Interactive Map
+
+- Visualize activities on an interactive map
+- Display activity locations using map markers
+- Select locations while creating activities
+- Calculate proximity between users and activities for location-aware discovery
+
+### Real-Time Communication
+
+- Real-time activity group chat using WebSockets
+- Activity-specific chat rooms
+- Friend-to-friend direct messaging
+- Conversation and message management
+
+### Social Features
+
+- Send and manage friend requests
+- View user profiles
+- Connect with other users through shared activities
+- Receive notifications for relevant user and activity events
+
+### User Authentication & Onboarding
+
+- Google OAuth authentication
+- Session-based authentication using NextAuth.js
+- User onboarding and profile setup
+- User profile management
+- Interest and preference configuration
+
+### Emergency SOS
+
+- Location-aware SOS broadcasting
+- Notify nearby users when an emergency is triggered
+- Track emergency responses
+- Allow users to respond to SOS alerts
+- Support false-alarm reporting and validation
+- Apply temporary account suspension after repeated false SOS alerts
+
+---
+
+## Tech Stack
+
+### Frontend
+
+- Next.js 14
+- React 18
+- JavaScript
+- Tailwind CSS
+- Framer Motion
+- Leaflet
+- React Leaflet
+- SWR
+
+### Backend
+
+- Python
+- FastAPI
+- SQLAlchemy
+- SQLite
+- aiosqlite
+- WebSockets
+
+### Authentication
+
+- NextAuth.js
+- Google OAuth
+
+---
+
+## Architecture
+
+Kinnect follows a client-server architecture with a Next.js frontend communicating with a FastAPI backend.
+
+```text
+                         ┌─────────────────────────┐
+                         │      Next.js + React     │
+                         │        Frontend          │
+                         └────────────┬────────────┘
+                                      │
+                             HTTP / REST APIs
+                                      │
+                         ┌────────────▼────────────┐
+                         │        FastAPI           │
+                         │         Backend          │
+                         └──────┬─────────┬────────┘
+                                │         │
+                       ┌────────▼───┐ ┌───▼──────────┐
+                       │ SQLAlchemy │ │  WebSockets  │
+                       │  + SQLite  │ │ Real-time    │
+                       │  Database  │ │ Communication│
+                       └────────────┘ └──────────────┘
 ```
 
-Or just copy the `GOAT` folder to their machine.
-
 ---
 
-### Step 2: Backend Setup
+## Project Structure
 
-```bash
-# Navigate to backend
-cd backend
-
-# Create a Python virtual environment
-python -m venv venv
-
-# Activate it
-# Windows:
-venv\Scripts\activate
-# macOS/Linux:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run database migrations (creates/updates tables)
-python migrate_db.py
-
-# Start the backend server
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
-```
-
-> ✅ Backend should now be running at `http://localhost:8000`
-> You can verify by visiting `http://localhost:8000` — it should show `{"message": "Welcome to the Kinnect API"}`
-
----
-
-### Step 3: Frontend Setup
-
-Open a **new terminal window** (keep the backend running):
-
-```bash
-# Navigate to frontend
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm run dev
-```
-
-> ✅ Frontend should now be running at `http://localhost:3000`
-
----
-
-### Step 4: Google OAuth Setup (for Login)
-
-The app uses **Google Sign-In**. To make login work, you need Google OAuth credentials:
-
-1. Go to [Google Cloud Console](https://console.cloud.google.com/)
-2. Create a new project (or use an existing one)
-3. Go to **APIs & Services → Credentials**
-4. Click **Create Credentials → OAuth 2.0 Client IDs**
-5. Set Application Type to **Web Application**
-6. Add these Authorized redirect URIs:
-   - `http://localhost:3000/api/auth/callback/google`
-7. Copy the **Client ID** and **Client Secret**
-
-Then create/edit the file `frontend/.env.local`:
-
-```env
-GOOGLE_CLIENT_ID=your-client-id-here
-GOOGLE_CLIENT_SECRET=your-client-secret-here
-NEXTAUTH_SECRET=any-random-secret-string-here
-NEXTAUTH_URL=http://localhost:3000
-```
-
-> 💡 **For testing without Google OAuth**: The app already has fallback values. If you just want to see the UI, you can skip this step, but the login button won't work without valid credentials.
-
----
-
-## 📁 Project Structure
-
-```
-GOAT/
-├── backend/                  # FastAPI Python Backend
-│   ├── src/
-│   │   ├── api/
-│   │   │   ├── activities.py # Activity CRUD, join, leave, report, notifications
-│   │   │   ├── auth.py       # User authentication sync
-│   │   │   ├── feed.py       # Proximity-based activity feed
-│   │   │   └── sos.py        # Emergency SOS broadcasting
-│   │   ├── models/
-│   │   │   └── schema.py     # SQLAlchemy database models
-│   │   ├── services/
-│   │   │   └── db.py         # Database connection
-│   │   ├── sockets/
-│   │   │   └── chat.py       # WebSocket real-time chat
-│   │   └── main.py           # FastAPI app entry point
-│   ├── migrate_db.py         # Database migration script
-│   ├── requirements.txt      # Python dependencies
-│   └── kinnect.db            # SQLite database (auto-created)
+```text
+kinnect/
 │
-├── frontend/                 # Next.js React Frontend
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── ActivityCard.jsx       # Activity card with creator info
-│   │   │   ├── CreateFloatModal.jsx   # Create new activity modal
-│   │   │   ├── EmergencyModal.jsx     # SOS emergency broadcast
-│   │   │   ├── LiveChatDrawer.jsx     # Real-time WebSocket chat
-│   │   │   ├── MapFeed.jsx            # Leaflet map with markers
-│   │   │   ├── MyActivitiesModal.jsx  # Hosted/Joined activities
-│   │   │   ├── NotificationsModal.jsx # Notification centre
-│   │   │   └── ProfileModal.jsx       # User profile
-│   │   ├── pages/
-│   │   │   ├── api/auth/[...nextauth].js  # Google OAuth
-│   │   │   ├── dashboard.jsx  # Main feed page
-│   │   │   ├── index.jsx      # Login page
-│   │   │   ├── map.jsx        # Full-screen map
-│   │   │   └── onboarding.jsx # Profile creation
-│   │   └── styles/
-│   ├── .env.local             # Environment variables (not committed)
-│   ├── next.config.js         # API proxy config
+├── backend/
+│   └── src/
+│       ├── auth/
+│       ├── chat/
+│       ├── dm/
+│       ├── activities/
+│       ├── feed/
+│       ├── friends/
+│       ├── notifications/
+│       ├── sos/
+│       ├── users/
+│       ├── sockets/
+│       ├── database.py
+│       └── main.py
+│
+├── frontend/
+│   ├── app/
+│   ├── components/
+│   ├── hooks/
+│   ├── lib/
+│   ├── public/
 │   └── package.json
 │
+├── .env.example
+├── requirements.txt
 └── README.md
 ```
 
 ---
 
-## 🌐 Running on Same WiFi (Access from Phone/Other Devices)
+## Getting Started
 
-To let others on the **same WiFi network** access the app from their phones:
+### Prerequisites
 
-### 1. Find your computer's local IP
+Make sure the following are installed:
+
+- Node.js
+- npm
+- Python 3.10+
+- pip
+
+---
+
+## Installation
+
+### 1. Clone the Repository
 
 ```bash
-# Windows
-ipconfig
-# Look for "IPv4 Address" under your WiFi adapter, e.g. 192.168.1.42
-
-# macOS/Linux
-ifconfig | grep inet
+git clone <your-repository-url>
+cd kinnect
 ```
 
-### 2. Start backend on all interfaces (already set up)
+### 2. Backend Setup
+
+Create and activate a Python virtual environment:
 
 ```bash
-uvicorn src.main:app --reload --host 0.0.0.0 --port 8000
+python -m venv venv
 ```
 
-### 3. Update frontend environment
+#### Windows
 
-Edit `frontend/.env.local` and change `NEXTAUTH_URL`:
+```bash
+venv\Scripts\activate
+```
+
+#### macOS / Linux
+
+```bash
+source venv/bin/activate
+```
+
+Install the backend dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Frontend Setup
+
+Open a new terminal and install the frontend dependencies:
+
+```bash
+cd frontend
+npm install
+```
+
+---
+
+## Environment Variables
+
+The application requires environment variables for authentication and backend configuration.
+
+Create the required environment files using the provided example configuration.
+
+### Frontend
+
+Configure the required NextAuth.js and Google OAuth variables:
 
 ```env
-NEXTAUTH_URL=http://192.168.1.42:3000
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+NEXTAUTH_SECRET=your_nextauth_secret
+NEXTAUTH_URL=http://localhost:3000
 ```
 
-### 4. Start frontend on all interfaces
+### Backend
+
+Configure the backend API and application settings according to `.env.example`.
+
+> **Note:** Never commit real credentials, API keys, OAuth secrets, or `.env` files to the repository.
+
+---
+
+## Running the Application
+
+### Start the Backend
+
+From the backend directory:
 
 ```bash
-npm run dev -- -H 0.0.0.0
+uvicorn src.main:app --reload
 ```
 
-### 5. Access from other devices
+The FastAPI backend will run on the configured local backend port.
 
-Others can open their browser and go to:
-```
-http://192.168.1.42:3000
+### Start the Frontend
+
+From the frontend directory:
+
+```bash
+npm run dev
 ```
 
-> ⚠️ **Important**: Update `NEXTAUTH_URL` in `.env.local` to your IP, or Google OAuth callbacks will fail.
-> Also update the Google Cloud Console redirect URIs to include `http://192.168.1.42:3000/api/auth/callback/google`.
+The Next.js development server will be available at:
+
+```text
+http://localhost:3000
+```
 
 ---
 
-## 🔧 Common Issues
+## Application Modules
 
-| Issue | Solution |
-|-------|----------|
-| `npm install` fails | Make sure Node.js v18+ is installed: `node --version` |
-| `pip install` fails | Make sure Python 3.10+ and pip are installed: `python --version` |
-| Backend won't start | Check if port 8000 is free. Kill other processes using it. |
-| Frontend shows "Loading..." forever | Make sure the backend is running on port 8000 |
-| Google login doesn't work | Check your `.env.local` has valid Google OAuth credentials |
-| Chat not connecting | Backend must be running. Check browser console for WebSocket errors. |
-| Map not loading | Needs internet connection to load OpenStreetMap tiles |
-| "CORS error" in console | Make sure backend CORS config includes your frontend URL |
+Kinnect is organized around several core application modules.
+
+### Activities
+
+The activity system supports:
+
+- Activity creation
+- Activity discovery
+- Activity joining and leaving
+- Join-request approval workflows
+- Activity disbanding
+- Activity participant management
+
+### Feed & Location
+
+The location-aware feed uses geographic coordinates to identify nearby activities and calculate distances between users and activities.
+
+### Chat
+
+The chat system provides:
+
+- Activity-specific group conversations
+- Real-time communication
+- WebSocket-based message delivery
+- Persistent message storage
+
+### Direct Messaging
+
+Users can communicate privately through:
+
+- One-to-one conversations
+- Friend-based messaging
+- Persistent direct-message history
+
+### Friends
+
+The social graph supports:
+
+- Sending friend requests
+- Accepting or managing requests
+- Maintaining user friendships
+- Connecting with users through the platform
+
+### Notifications
+
+The notification system provides users with updates related to activities, friendships, messages, and other application events.
+
+### SOS
+
+The emergency system provides:
+
+- Emergency creation with location information
+- Location-aware notifications to nearby users
+- SOS response tracking
+- False-alarm validation
+- Temporary suspension after repeated false SOS alerts
 
 ---
 
-## 🛠️ Tech Stack
+## Backend Components
 
-- **Frontend**: Next.js 14, React 18, Tailwind CSS, Framer Motion, Leaflet, SWR
-- **Backend**: FastAPI, SQLAlchemy (async), SQLite, WebSockets
-- **Auth**: NextAuth.js with Google OAuth
-- **Real-time**: WebSockets for live group chat
+The backend is organized into modular FastAPI components.
+
+### Database Models
+
+The database layer manages entities including:
+
+- Users
+- Activities
+- Participants
+- Join requests
+- Chat messages
+- Direct messages
+- Friendships
+- Notifications
+- Emergency events
+
+### API Modules
+
+Dedicated backend modules handle:
+
+- Authentication
+- User management
+- Activities
+- Activity feed
+- Friendships
+- Notifications
+- Group chat
+- Direct messaging
+- Emergency SOS functionality
+
+### WebSockets
+
+WebSocket endpoints provide real-time communication for:
+
+- Activity group chats
+- Direct messaging
+- Live communication between connected users
 
 ---
 
-## 📱 Features
+## Development
 
-- 🔐 Google Sign-In with profile onboarding
-- 📍 Proximity-based activity feed with distance calculation
-- 🗺️ Interactive map with emoji markers per activity type
-- 💬 Real-time WebSocket group chat per activity
-- 🔔 Notification centre (joins, leaves, disbands, approvals)
-- 🆘 SOS emergency broadcast with blinking map markers
-- 👥 Join modes: Quick Join & Request Access
-- 🚫 Auto-ban after 5 reports (5-day ban)
-- 📊 Activity limits (max 5 active per user)
-- ↩️ Leave/Disband with group notifications
+The frontend uses reusable React/Next.js components and client-side data fetching, while the FastAPI backend provides modular REST APIs and WebSocket endpoints.
+
+The application uses SQLAlchemy for database interaction and SQLite for local persistence.
+
+---
+
+## License
+
+This project is intended for educational and portfolio purposes.
