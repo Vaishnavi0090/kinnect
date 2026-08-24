@@ -115,34 +115,91 @@ Kinnect follows a client-server architecture with a Next.js frontend communicati
 ## Project Structure
 
 ```text
+## Project Structure
+
+```text
 kinnect/
 │
 ├── backend/
-│   └── src/
-│       ├── auth/
-│       ├── chat/
-│       ├── dm/
-│       ├── activities/
-│       ├── feed/
-│       ├── friends/
-│       ├── notifications/
-│       ├── sos/
-│       ├── users/
-│       ├── sockets/
-│       ├── database.py
-│       └── main.py
+│   ├── src/
+│   │   ├── api/
+│   │   │   ├── activities.py
+│   │   │   ├── auth.py
+│   │   │   ├── feed.py
+│   │   │   ├── friends.py
+│   │   │   └── sos.py
+│   │   │
+│   │   ├── models/
+│   │   │   └── schema.py
+│   │   │
+│   │   ├── services/
+│   │   │   └── db.py
+│   │   │
+│   │   ├── sockets/
+│   │   │   ├── chat.py
+│   │   │   └── dm.py
+│   │   │
+│   │   └── main.py
+│   │
+│   ├── migrate_db.py
+│   ├── migrate_sos.py
+│   ├── cleanup_notifs.py
+│   ├── cleanup_all_notifs.py
+│   ├── export_data.py
+│   ├── render.yaml
+│   └── requirements.txt
 │
 ├── frontend/
-│   ├── app/
-│   ├── components/
-│   ├── hooks/
-│   ├── lib/
+│   ├── src/
+│   │   ├── components/
+│   │   │   ├── ActivityCard.jsx
+│   │   │   ├── ActivityInfoDrawer.jsx
+│   │   │   ├── CalendarModal.jsx
+│   │   │   ├── ChatsModal.jsx
+│   │   │   ├── CreateFloatModal.jsx
+│   │   │   ├── DirectMessageDrawer.jsx
+│   │   │   ├── EmergencyModal.jsx
+│   │   │   ├── FilterModal.jsx
+│   │   │   ├── LiveChatDrawer.jsx
+│   │   │   ├── LocationPicker.jsx
+│   │   │   ├── MapFeed.jsx
+│   │   │   ├── MyActivitiesModal.jsx
+│   │   │   ├── NotificationsModal.jsx
+│   │   │   ├── ProfileModal.jsx
+│   │   │   ├── SOSAlertBanner.jsx
+│   │   │   └── UserProfileModal.jsx
+│   │   │
+│   │   ├── pages/
+│   │   │   ├── api/
+│   │   │   │   └── auth/
+│   │   │   │       └── [...nextauth].js
+│   │   │   ├── dashboard.jsx
+│   │   │   ├── index.jsx
+│   │   │   ├── map.jsx
+│   │   │   └── onboarding.jsx
+│   │   │
+│   │   ├── styles/
+│   │   │   └── globals.css
+│   │   │
+│   │   └── utils/
+│   │       └── feedback.js
+│   │
 │   ├── public/
-│   └── package.json
+│   │   ├── icon-512.png
+│   │   ├── logo.png
+│   │   ├── manifest.json
+│   │   └── sw.js
+│   │
+│   ├── .env.example
+│   ├── next.config.js
+│   ├── package.json
+│   ├── postcss.config.js
+│   └── tailwind.config.js
 │
-├── .env.example
-├── requirements.txt
-└── README.md
+├── .gitignore
+├── README.md
+└── package-lock.json
+```
 ```
 
 ---
